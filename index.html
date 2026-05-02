@@ -310,46 +310,105 @@
 
         <!-- 喂食記錄 -->
         <div id="feeding" class="content-section active">
-            <h2 style="margin-bottom: 20px; color: #333;"><i class="fas fa-utensils"></i> 喂食記錄</h2>
-            <form id="feedingForm">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="feedingDate">日期</label>
-                        <input type="date" id="feedingDate" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="feedingTime">時間</label>
-                        <input type="time" id="feedingTime" required>
-                    </div>
+            <h2 style="margin-bottom: 20px; color: #333;"><i class="fas fa-utensils"></i> 喂食與排便</h2>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+                <!-- 喂食表單 -->
+                <div style="background: #fcfcfc; padding: 20px; border-radius: 15px; border: 1px solid #eee;">
+                    <h3 style="margin-bottom: 15px; font-size: 16px; color: var(--primary-color);"><i class="fas fa-plus-circle"></i> 新增喂食</h3>
+                    <form id="feedingForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="feedingDate">日期</label>
+                                <input type="date" id="feedingDate" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="feedingTime">時間</label>
+                                <input type="time" id="feedingTime" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="foodType">食物類型</label>
+                                <select id="foodType" required>
+                                    <option value="">選擇類型</option>
+                                    <option value="乾糧">乾糧</option>
+                                    <option value="濕糧">濕糧</option>
+                                    <option value="生食">生食</option>
+                                    <option value="自制餐">自制餐</option>
+                                    <option value="零食">零食</option>
+                                    <option value="其他">其他</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="foodAmount">分量</label>
+                                <input type="text" id="foodAmount" required placeholder="例如：250g">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="foodContent">備註</label>
+                            <textarea id="foodContent" placeholder="例如：雞胸肉、益生菌..."></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="padding: 8px;"><i class="fas fa-save"></i> 保存喂食</button>
+                    </form>
                 </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="foodType">食物類型</label>
-                        <select id="foodType" required>
-                            <option value="">選擇食物類型</option>
-                            <option value="乾糧">乾糧</option>
-                            <option value="濕糧">濕糧</option>
-                            <option value="生食">生食</option>
-                            <option value="自制餐">自制餐</option>
-                            <option value="零食">零食</option>
-                            <option value="其他">其他</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="foodAmount">食物分量</label>
-                        <input type="text" id="foodAmount" required placeholder="例如：250g">
-                    </div>
+
+                <!-- 排便表單 -->
+                <div style="background: #fcfcfc; padding: 20px; border-radius: 15px; border: 1px solid #eee;">
+                    <h3 style="margin-bottom: 15px; font-size: 16px; color: #8d6e63;"><i class="fas fa-poop"></i> 新增排便</h3>
+                    <form id="poopForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="poopDate">日期</label>
+                                <input type="date" id="poopDate" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="poopTime">時間</label>
+                                <input type="time" id="poopTime" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="poopStatus">狀態</label>
+                                <select id="poopStatus" required>
+                                    <option value="成形">成形 - 正常</option>
+                                    <option value="軟便">軟便 - 較稀</option>
+                                    <option value="腹瀉">腹瀉 - 水狀</option>
+                                    <option value="便秘">便秘 - 乾硬</option>
+                                    <option value="黏液便">黏液便 - 有黏液</option>
+                                    <option value="血便">血便 - 帶血</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="poopNotes">觀察備註</label>
+                            <textarea id="poopNotes" placeholder="記錄顏色、氣味或特殊情況..."></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="background: linear-gradient(135deg, #8d6e63 0%, #5d4037 100%); padding: 8px;"><i class="fas fa-save"></i> 保存排便</button>
+                    </form>
                 </div>
-                <div class="form-group">
-                    <label for="foodContent">食物內容/備註</label>
-                    <textarea id="foodContent" placeholder="例如：雞胸肉100g，糙米50g..."></textarea>
+            </div>
+
+            <div style="margin-top: 30px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div>
+                    <h3 style="margin-bottom: 10px; font-size: 15px; color: #666;"><i class="fas fa-history"></i> 喂食歷史</h3>
+                    <div id="feedingList" class="record-list"></div>
                 </div>
-                <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> 保存記錄</button>
-            </form>
-            <div id="feedingList" class="record-list"></div>
-            <div class="chart-container">
-                <div class="chart-title"><i class="fas fa-chart-bar"></i> 每日攝入量統計 (g)</div>
-                <canvas id="feedingChart"></canvas>
+                <div>
+                    <h3 style="margin-bottom: 10px; font-size: 15px; color: #666;"><i class="fas fa-poop"></i> 排便歷史</h3>
+                    <div id="poopList" class="record-list"></div>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px;">
+                <div class="chart-container">
+                    <div class="chart-title"><i class="fas fa-chart-bar"></i> 每日攝入量統計 (g)</div>
+                    <canvas id="feedingChart"></canvas>
+                </div>
+                <div style="background: #fff; padding: 15px; border-radius: 15px; border: 1px solid #eee; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+                    <div class="chart-title"><i class="fas fa-list-alt"></i> 便便總結表</div>
+                    <div id="poopSummaryTable" style="max-height: 200px; overflow-y: auto;"></div>
+                </div>
             </div>
         </div>
 
@@ -357,7 +416,6 @@
         <div id="training" class="content-section">
             <h2 style="margin-bottom: 20px; color: #333;"><i class="fas fa-dog"></i> 訓練記錄</h2>
             <form id="trainingForm">
-                <!-- ... 省略表單內容保持不變 ... -->
                 <div class="form-row">
                     <div class="form-group">
                         <label for="trainingDate">日期</label>
@@ -401,7 +459,6 @@
         <div id="growth" class="content-section">
             <h2 style="margin-bottom: 20px; color: #333;"><i class="fas fa-ruler-vertical"></i> 生長記錄</h2>
             <form id="growthForm">
-                <!-- ... 省略內容保持不變 ... -->
                 <div class="form-row">
                     <div class="form-group">
                         <label for="growthDate">日期</label>
@@ -444,7 +501,6 @@
         <div id="medical" class="content-section">
             <h2 style="margin-bottom: 20px; color: #333;"><i class="fas fa-heartbeat"></i> 醫療健康</h2>
             <form id="medicalForm">
-                <!-- ... 省略內容保持不變 ... -->
                 <div class="form-row">
                     <div class="form-group">
                         <label for="medicalDate">日期</label>
@@ -519,42 +575,11 @@
         let appData = {
             petName: "布布",
             records: {
-                feeding: [
-                    { id: 1714341600000, date: "2026-04-29", time: "09:50", foodType: "乾糧", foodAmount: "10g", foodContent: "少量復食，精神良好" },
-                    { id: 1714264200000, date: "2026-04-28", time: "10:30", foodType: "乾糧", foodAmount: "10g", foodContent: "糧 + 喂藥零食" },
-                    { id: 1714251600000, date: "2026-04-28", time: "07:00", foodType: "乾糧", foodAmount: "8g", foodContent: "早起喂食" },
-                    { id: 1714213200000, date: "2026-04-27", time: "19:00", foodType: "乾糧", foodAmount: "10g", foodContent: "糧 + 益生菌 + 3滴補血肝精" },
-                    { id: 1714191600000, date: "2026-04-27", time: "13:00", foodType: "乾糧", foodAmount: "8g", foodContent: "糧 + 喂藥零食" },
-                    { id: 1714171800000, date: "2026-04-27", time: "07:30", foodType: "乾糧", foodAmount: "10g", foodContent: "早餐" },
-                    { id: 1714138200000, date: "2026-04-26", time: "21:30", foodType: "乾糧", foodAmount: "7g", foodContent: "糧 + 益生菌 + 4滴補血肝精" },
-                    { id: 1714122000000, date: "2026-04-26", time: "17:00", foodType: "乾糧", foodAmount: "5g", foodContent: "糧 + 喂藥零食" },
-                    { id: 1714104000000, date: "2026-04-26", time: "12:00", foodType: "乾糧", foodAmount: "10g", foodContent: "午餐" },
-                    { id: 1714086000000, date: "2026-04-26", time: "07:00", foodType: "乾糧", foodAmount: "10g", foodContent: "糧 + 水" },
-                    { id: 1714057200000, date: "2026-04-25", time: "23:00", foodType: "乾糧", foodAmount: "10g", foodContent: "糧 + 1/3粒益生菌" },
-                    { id: 1714042800000, date: "2026-04-25", time: "19:00", foodType: "其他", foodAmount: "5g", foodContent: "藥糧" },
-                    { id: 1714035600000, date: "2026-04-25", time: "17:00", foodType: "乾糧", foodAmount: "5g", foodContent: "少量零食" },
-                    { id: 1713996000000, date: "2026-04-25", time: "06:00", foodType: "乾糧", foodAmount: "5g", foodContent: "剛回家少量喂食" }
-                ],
-                training: [
-                     { id: 1714341300000, date: "2026-04-29", time: "09:35", commandType: "日常表現", duration: "10", progress: "優秀", notes: "精神恢復，活動力強，蹦蹦跳跳" },
-                     { id: 1714264200001, date: "2026-04-28", time: "10:30", commandType: "喂藥配合", duration: "5", progress: "良好", notes: "持續配合喂藥" },
-                     { id: 1714191600001, date: "2026-04-27", time: "13:00", commandType: "護理/指令", duration: "20", progress: "良好", notes: "鞏固指令；擦臉擦手配合，抗拒擦肚子" },
-                     { id: 1714122000001, date: "2026-04-26", time: "17:00", commandType: "喂藥適應", duration: "10", progress: "優秀", notes: "適應喂藥零食，成功解決喂藥難題" },
-                     { id: 1714042800001, date: "2026-04-25", time: "19:00", commandType: "坐下/獨處", duration: "30", progress: "良好", notes: "練習獨處（能入睡）、“坐下”指令" }
-                 ],
-                 growth: [
-                    { id: 1714341600003, date: "2026-04-29", weight: "2.5", height: "20", bodyCondition: "理想", notes: "精神奕奕" },
-                    { id: 1714086000003, date: "2026-04-26", weight: "2.3", height: "19", bodyCondition: "理想", notes: "初步適應環境" }
-                 ],
-                 medical: [
-                    { id: 1714341300002, date: "2026-04-29", medicalType: "其他", medicalTitle: "黏液便追蹤", medicalNotes: "仍有黏液便，需聯絡獸醫追蹤" },
-                    { id: 1714290600000, date: "2026-04-28", medicalType: "其他", medicalTitle: "狀態觀察", medicalNotes: "四腳朝天入睡，排除極度虛弱擔憂" },
-                    { id: 1714280100000, date: "2026-04-28", medicalType: "其他", medicalTitle: "嘔吐觀察", medicalNotes: "13:55 嘔吐並攝回；14:00 舔食少量水，需密切觀察" },
-                    { id: 1714275600000, date: "2026-04-28", medicalType: "其他", medicalTitle: "排便觀察", medicalNotes: "01:30, 07:30 成形；09:00 較黏有黏液，需持續觀察" },
-                    { id: 1714216800000, date: "2026-04-27", medicalType: "其他", medicalTitle: "排便/運動", medicalNotes: "排便3次皆成形；運動量大到吐舌頭；有短暫分離焦慮" },
-                    { id: 1714052400000, date: "2026-04-26", medicalType: "其他", medicalTitle: "排便紀錄", medicalNotes: "05:30 排便成形" },
-                    { id: 1714035600002, date: "2026-04-25", medicalType: "就診", medicalTitle: "確診彎曲桿菌", medicalNotes: "接回家第一天；已打三針疫苗有抗體；15:00排便成形" }
-                ]
+                feeding: [],
+                poop: [],
+                training: [],
+                growth: [],
+                medical: []
             }
         };
 
@@ -576,10 +601,9 @@
         function loadData() {
             const saved = localStorage.getItem('petRecordsPro_Bubu');
             
-            // 先定義代碼中的初始紀錄 (即剛剛導入的那些)
             const initialRecords = {
                 feeding: [
-                    { id: 1714341600000, date: "2026-04-29", time: "09:50", foodType: "乾糧", foodAmount: "少量復食", foodContent: "空腹10小時後復食，精神良好" },
+                    { id: 1714341600000, date: "2026-04-29", time: "09:50", foodType: "乾糧", foodAmount: "10g", foodContent: "少量復食，精神良好" },
                     { id: 1714264200000, date: "2026-04-28", time: "10:30", foodType: "乾糧", foodAmount: "10g", foodContent: "糧 + 喂藥零食" },
                     { id: 1714251600000, date: "2026-04-28", time: "07:00", foodType: "乾糧", foodAmount: "8g", foodContent: "早起喂食" },
                     { id: 1714213200000, date: "2026-04-27", time: "19:00", foodType: "乾糧", foodAmount: "10g", foodContent: "糧 + 益生菌 + 3滴補血肝精" },
@@ -591,8 +615,18 @@
                     { id: 1714086000000, date: "2026-04-26", time: "07:00", foodType: "乾糧", foodAmount: "10g", foodContent: "糧 + 水" },
                     { id: 1714057200000, date: "2026-04-25", time: "23:00", foodType: "乾糧", foodAmount: "10g", foodContent: "糧 + 1/3粒益生菌" },
                     { id: 1714042800000, date: "2026-04-25", time: "19:00", foodType: "其他", foodAmount: "5g", foodContent: "藥糧" },
-                    { id: 1714035600000, date: "2026-04-25", time: "17:00", foodType: "乾糧", foodAmount: "約20粒", foodContent: "少量零食" },
-                    { id: 1713996000000, date: "2026-04-25", time: "06:00", foodType: "乾糧", foodAmount: "少量", foodContent: "剛回家少量喂食" }
+                    { id: 1714035600000, date: "2026-04-25", time: "17:00", foodType: "乾糧", foodAmount: "5g", foodContent: "少量零食" },
+                    { id: 1713996000000, date: "2026-04-25", time: "06:00", foodType: "乾糧", foodAmount: "5g", foodContent: "剛回家少量喂食" }
+                ],
+                poop: [
+                    { id: 1714275600001, date: "2026-04-28", time: "09:00", status: "黏液便", notes: "較黏，有黏液" },
+                    { id: 1714275600002, date: "2026-04-28", time: "07:30", status: "成形", notes: "正常" },
+                    { id: 1714275600003, date: "2026-04-28", time: "01:30", status: "成形", notes: "正常" },
+                    { id: 1714216800001, date: "2026-04-27", time: "20:00", status: "成形", notes: "正常" },
+                    { id: 1714216800002, date: "2026-04-27", time: "14:40", status: "成形", notes: "正常" },
+                    { id: 1714216800003, date: "2026-04-27", time: "04:30", status: "成形", notes: "正常" },
+                    { id: 1714052400001, date: "2026-04-26", time: "05:30", status: "成形", notes: "正常" },
+                    { id: 1714035600004, date: "2026-04-25", time: "15:00", status: "成形", notes: "正常" }
                 ],
                 training: [
                     { id: 1714341300000, date: "2026-04-29", time: "09:35", commandType: "日常表現", duration: "10", progress: "優秀", notes: "精神恢復，活動力強，蹦蹦跳跳" },
@@ -601,50 +635,66 @@
                     { id: 1714122000001, date: "2026-04-26", time: "17:00", commandType: "喂藥適應", duration: "10", progress: "優秀", notes: "適應喂藥零食，成功解決喂藥難題" },
                     { id: 1714042800001, date: "2026-04-25", time: "19:00", commandType: "坐下/獨處", duration: "30", progress: "良好", notes: "練習獨處（能入睡）、“坐下”指令" }
                 ],
-                growth: [],
+                growth: [
+                    { id: 1714341600003, date: "2026-04-29", weight: "2.5", height: "20", bodyCondition: "理想", notes: "精神奕奕" },
+                    { id: 1714086000003, date: "2026-04-26", weight: "2.3", height: "19", bodyCondition: "理想", notes: "初步適應環境" }
+                ],
                 medical: [
-                    { id: 1714341300002, date: "2026-04-29", medicalType: "其他", medicalTitle: "黏液便追蹤", medicalNotes: "仍有黏液便，需聯絡獸醫追蹤" },
                     { id: 1714290600000, date: "2026-04-28", medicalType: "其他", medicalTitle: "狀態觀察", medicalNotes: "四腳朝天入睡，排除極度虛弱擔憂" },
                     { id: 1714280100000, date: "2026-04-28", medicalType: "其他", medicalTitle: "嘔吐觀察", medicalNotes: "13:55 嘔吐並攝回；14:00 舔食少量水，需密切觀察" },
-                    { id: 1714275600000, date: "2026-04-28", medicalType: "其他", medicalTitle: "排便觀察", medicalNotes: "01:30, 07:30 成形；09:00 較黏有黏液，需持續觀察" },
-                    { id: 1714216800000, date: "2026-04-27", medicalType: "其他", medicalTitle: "排便/運動", medicalNotes: "排便3次皆成形；運動量大到吐舌頭；有短暫分離焦慮" },
-                    { id: 1714052400000, date: "2026-04-26", medicalType: "其他", medicalTitle: "排便紀錄", medicalNotes: "05:30 排便成形" },
-                    { id: 1714035600002, date: "2026-04-25", medicalType: "就診", medicalTitle: "確診彎曲桿菌", medicalNotes: "接回家第一天；已打三針疫苗有抗體；15:00排便成形" }
+                    { id: 1714035600002, date: "2026-04-25", medicalType: "就診", medicalTitle: "確診彎曲桿菌", medicalNotes: "接回家第一天；已打三針疫苗有抗體" }
                 ]
             };
 
+            // 數據遷移邏輯：將醫療中帶有「便」關鍵字的紀錄遷移到 poop
+            initialRecords.medical = initialRecords.medical.filter(m => {
+                if (m.medicalTitle.includes('便') || m.medicalNotes.includes('便')) {
+                    const poopRecord = {
+                        id: m.id,
+                        date: m.date,
+                        time: "00:00", // 預設時間
+                        status: m.medicalTitle.includes('黏液') ? '黏液便' : '觀察',
+                        notes: `(由醫療遷移) ${m.medicalTitle}: ${m.medicalNotes}`
+                    };
+                    if (!initialRecords.poop.some(p => p.id === poopRecord.id)) {
+                        initialRecords.poop.push(poopRecord);
+                    }
+                    return false; // 從醫療中移除
+                }
+                return true;
+            });
+
             if (saved) {
                 const savedData = JSON.parse(saved);
-                // 強制合併：如果 initialRecords 中的紀錄在 savedData 中不存在，則加入
-                ['feeding', 'training', 'growth', 'medical'].forEach(type => {
+                if (!savedData.records.poop) savedData.records.poop = [];
+                
+                // 同樣對 savedData 進行遷移處理（如果用戶已經存儲了數據）
+                savedData.records.medical = savedData.records.medical.filter(m => {
+                    if (m.medicalTitle.includes('便') || m.medicalNotes.includes('便')) {
+                        const poopRecord = {
+                            id: m.id,
+                            date: m.date,
+                            time: "00:00",
+                            status: m.medicalTitle.includes('黏液') ? '黏液便' : '觀察',
+                            notes: `(由醫療遷移) ${m.medicalTitle}: ${m.medicalNotes}`
+                        };
+                        if (!savedData.records.poop.some(p => p.id === poopRecord.id)) {
+                            savedData.records.poop.push(poopRecord);
+                        }
+                        return false;
+                    }
+                    return true;
+                });
+
+                ['feeding', 'poop', 'training', 'growth', 'medical'].forEach(type => {
                     const savedIds = new Set(savedData.records[type].map(r => r.id));
                     initialRecords[type].forEach(record => {
-                        if (!savedIds.has(record.id)) {
-                            savedData.records[type].push(record);
-                        }
+                        if (!savedIds.has(record.id)) savedData.records[type].push(record);
                     });
                 });
                 appData = savedData;
             } else {
-                // 首次加載，直接使用 initialRecords
                 appData.records = initialRecords;
-                
-                // 嘗試從舊版本遷移（如果有的話）
-                const multiPetSaved = localStorage.getItem('petRecordsPro');
-                if (multiPetSaved) {
-                    const multiData = JSON.parse(multiPetSaved);
-                    const firstPetId = multiData.currentPetId || (multiData.pets && multiData.pets[0] && multiData.pets[0].id);
-                    if (firstPetId && multiData.records[firstPetId]) {
-                        // 合併舊數據
-                        const oldRecords = multiData.records[firstPetId];
-                        ['feeding', 'training', 'growth', 'medical'].forEach(type => {
-                            const currentIds = new Set(appData.records[type].map(r => r.id));
-                            (oldRecords[type] || []).forEach(r => {
-                                if (!currentIds.has(r.id)) appData.records[type].push(r);
-                            });
-                        });
-                    }
-                }
             }
             saveData();
         }
@@ -653,7 +703,6 @@
             localStorage.setItem('petRecordsPro_Bubu', JSON.stringify(appData));
         }
 
-        // UI 渲染
         function refreshUI() {
             renderAllLists();
             updateStats();
@@ -662,19 +711,78 @@
 
         function renderAllCharts() {
             const activeTab = document.querySelector('.content-section.active').id;
-            if (activeTab === 'feeding') renderFeedingChart();
+            if (activeTab === 'feeding') {
+                renderFeedingChart();
+                renderPoopSummary();
+            }
             if (activeTab === 'growth') renderGrowthCharts();
             if (activeTab === 'statistics') renderSummaryChart();
         }
 
-        // 輔助函數：解析數值
+        function renderPoopSummary() {
+            const container = document.getElementById('poopSummaryTable');
+            if (!container) return;
+            
+            const items = (appData.records.poop || []).sort((a, b) => new Date(b.date + ' ' + (b.time || '00:00')) - new Date(a.date + ' ' + (a.time || '00:00')));
+            
+            if (items.length === 0) {
+                container.innerHTML = '<div class="empty-state" style="padding: 20px;">尚無排便紀錄</div>';
+                return;
+            }
+
+            // 按日期分組
+            const groups = {};
+            items.forEach(item => {
+                if (!groups[item.date]) {
+                    groups[item.date] = [];
+                }
+                groups[item.date].push(item);
+            });
+
+            // 按日期降序排序
+            const sortedDates = Object.keys(groups).sort((a, b) => new Date(b) - new Date(a));
+
+            let html = `<table class="data-table" style="font-size: 12px;">
+                <thead>
+                    <tr>
+                        <th style="width: 100px;">日期</th>
+                        <th>紀錄詳情 (時間 | 狀態)</th>
+                    </tr>
+                </thead>
+                <tbody>`;
+
+            sortedDates.slice(0, 7).forEach(date => { // 顯示最近7天的總結
+                const dayRecords = groups[date].sort((a, b) => (b.time || '00:00').localeCompare(a.time || '00:00'));
+                const detailsHtml = dayRecords.map(r => 
+                    `<div style="margin-bottom: 4px; padding-bottom: 4px; border-bottom: 1px dashed #eee; last-child { border: none; }">
+                        <span style="color: #666; width: 50px; display: inline-block;">${r.time}</span>
+                        <span style="color: #8d6e63; font-weight: bold; margin-left: 10px;">${r.status}</span>
+                        ${r.notes ? `<small style="color: #999; margin-left: 10px;">(${r.notes})</small>` : ''}
+                    </div>`
+                ).join('');
+
+                html += `
+                    <tr>
+                        <td style="vertical-align: top; font-weight: 600;">${date.split('-').slice(1).join('/')}(${getDayOfWeek(date)})</td>
+                        <td>${detailsHtml}</td>
+                    </tr>`;
+            });
+
+            html += `</tbody></table>`;
+            container.innerHTML = html;
+        }
+
+        function getDayOfWeek(dateStr) {
+            const days = ['日', '一', '二', '三', '四', '五', '六'];
+            return days[new Date(dateStr).getDay()];
+        }
+
         function parseValue(str) {
             if (!str) return 0;
             const match = str.match(/(\d+(\.\d+)?)/);
             return match ? parseFloat(match[1]) : 0;
         }
 
-        // 輔助函數：按日期分組數據
         function groupByDate(data, valueKey, isNumeric = true) {
             const groups = {};
             data.forEach(item => {
@@ -715,29 +823,6 @@
             });
         }
 
-        function renderTrainingChart() {
-            const data = groupByDate(appData.records.training, 'duration');
-            initChart('trainingChart', {
-                type: 'line',
-                data: {
-                    labels: data.map(d => d[0].split('-').slice(1).join('/')),
-                    datasets: [{
-                        label: '訓練時長 (min)',
-                        data: data.map(d => d[1]),
-                        borderColor: '#764ba2',
-                        backgroundColor: 'rgba(118, 75, 162, 0.1)',
-                        fill: true,
-                        tension: 0.4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: { y: { beginAtZero: true } }
-                }
-            });
-        }
-
         function renderGrowthCharts() {
             const data = [...appData.records.growth].sort((a, b) => new Date(a.date) - new Date(b.date));
             initChart('growthWeightChart', {
@@ -752,37 +837,11 @@
                         fill: false
                     }]
                 },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false
-                }
-            });
-        }
-
-        function renderMedicalChart() {
-            const counts = {};
-            appData.records.medical.forEach(m => {
-                counts[m.medicalType] = (counts[m.medicalType] || 0) + 1;
-            });
-            initChart('medicalChart', {
-                type: 'doughnut',
-                data: {
-                    labels: Object.keys(counts),
-                    datasets: [{
-                        data: Object.values(counts),
-                        backgroundColor: ['#ff6b6b', '#4ecdc4', '#ffe66d', '#1a535c', '#f7fff7', '#ff9f1c']
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { position: 'right' } }
-                }
+                options: { responsive: true, maintainAspectRatio: false }
             });
         }
 
         function renderSummaryChart() {
-            // 在統計頁面顯示體重趨勢作為摘要
             const growthData = [...appData.records.growth].sort((a, b) => new Date(a.date) - new Date(b.date));
             initChart('weightChart', {
                 type: 'line',
@@ -797,28 +856,17 @@
                         backgroundColor: 'rgba(102, 126, 234, 0.1)'
                     }]
                 },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false
-                }
+                options: { responsive: true, maintainAspectRatio: false }
             });
         }
 
         function switchTab(tabId) {
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             document.querySelectorAll('.content-section').forEach(section => section.classList.remove('active'));
-            
             const activeBtn = Array.from(document.querySelectorAll('.tab-btn')).find(btn => btn.getAttribute('onclick').includes(tabId));
             if (activeBtn) activeBtn.classList.add('active');
             document.getElementById(tabId).classList.add('active');
-            
             refreshUI();
-        }
-
-        // --- 恢復遺失的函數 ---
-        
-        function saveData() {
-            localStorage.setItem('petRecordsPro_Bubu', JSON.stringify(appData));
         }
 
         function renderList(type, elementId, headers, templateFn) {
@@ -827,7 +875,7 @@
             const items = (appData.records[type] || []).sort((a, b) => new Date(b.date + ' ' + (b.time || '00:00')) - new Date(a.date + ' ' + (a.time || '00:00')));
 
             if (items.length === 0) {
-                container.innerHTML = `<div class="empty-state"><p>尚無${type === 'feeding' ? '喂食' : type === 'training' ? '訓練' : type === 'growth' ? '生長' : '醫療'}記錄</p></div>`;
+                container.innerHTML = `<div class="empty-state"><p>尚無${type === 'feeding' ? '喂食' : type === 'poop' ? '排便' : type === 'training' ? '訓練' : type === 'growth' ? '生長' : '醫療'}記錄</p></div>`;
                 return;
             }
 
@@ -851,6 +899,13 @@
                 <td>${item.foodType}</td>
                 <td>${item.foodAmount}</td>
                 <td>${item.foodContent || ''}</td>
+            `);
+
+            renderList('poop', 'poopList', ['日期', '時間', '狀態', '觀察備註'], item => `
+                <td style="color: #8d6e63; font-weight: bold;"><i class="fas fa-poop"></i> ${item.date}</td>
+                <td>${item.time}</td>
+                <td><span style="background: #efebe9; padding: 2px 6px; border-radius: 4px;">${item.status}</span></td>
+                <td>${item.notes || ''}</td>
             `);
 
             renderList('training', 'trainingList', ['日期', '時間', '項目', '時長(min)', '進展', '備註'], item => `
@@ -884,24 +939,24 @@
             const container = document.getElementById('recentRecords');
             if (!container) return;
             let all = [];
-            ['feeding', 'training', 'growth', 'medical'].forEach(type => {
+            ['feeding', 'poop', 'training', 'growth', 'medical'].forEach(type => {
                 (appData.records[type] || []).forEach(r => all.push({...r, category: type}));
             });
 
             all.sort((a, b) => new Date(b.date + ' ' + (b.time || '00:00')) - new Date(a.date + ' ' + (a.time || '00:00')));
             
-            const icons = { feeding: 'utensils', training: 'dog', growth: 'ruler-vertical', medical: 'heartbeat' };
-            const names = { feeding: '喂食', training: '訓練', growth: '生長', medical: '醫療' };
+            const icons = { feeding: 'utensils', poop: 'poop', training: 'dog', growth: 'ruler-vertical', medical: 'heartbeat' };
+            const names = { feeding: '喂食', poop: '排便', training: '訓練', growth: '生長', medical: '醫療' };
 
             container.innerHTML = all.slice(0, 5).map(r => `
-                <div class="record-item" style="padding: 10px 20px;">
-                    <div class="record-header" style="margin-bottom: 5px;">
-                        <span class="record-date" style="font-size: 12px;">${r.date}</span>
-                        <span style="color: var(--primary-color); font-size: 12px; font-weight: bold;">
+                <div class="record-item" style="padding: 10px 20px; display: block;">
+                    <div class="record-header" style="margin-bottom: 5px; display: flex; justify-content: space-between;">
+                        <span class="record-date" style="font-size: 12px; color: #999;">${r.date} ${r.time || ''}</span>
+                        <span style="color: ${r.category === 'poop' ? '#8d6e63' : 'var(--primary-color)'}; font-size: 12px; font-weight: bold;">
                             <i class="fas fa-${icons[r.category]}"></i> ${names[r.category]}
                         </span>
                     </div>
-                    <div style="font-size: 14px; color: #444;">${r.foodType || r.commandType || (r.medicalTitle ? r.medicalTitle : '體重記錄')}</div>
+                    <div style="font-size: 14px; color: #444;">${r.foodType || r.status || r.commandType || (r.medicalTitle ? r.medicalTitle : '體重記錄')}</div>
                 </div>
             `).join('');
         }
@@ -909,7 +964,6 @@
         function updateStats() {
             const now = new Date();
             const thisMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
-            
             const monthFeedings = (appData.records.feeding || []).filter(f => f.date.startsWith(thisMonth)).length;
             const totalDuration = (appData.records.training || []).reduce((sum, t) => sum + parseInt(t.duration || 0), 0);
             const latestGrowth = (appData.records.growth || []).sort((a, b) => new Date(b.date) - new Date(a.date))[0];
@@ -931,7 +985,6 @@
             }
         }
 
-        // 表單處理
         function handleFormSubmit(formId, type, getFieldsFn) {
             const form = document.getElementById(formId);
             if (!form) return;
@@ -954,6 +1007,13 @@
             foodType: document.getElementById('foodType').value,
             foodAmount: document.getElementById('foodAmount').value,
             foodContent: document.getElementById('foodContent').value
+        }));
+
+        handleFormSubmit('poopForm', 'poop', () => ({
+            date: document.getElementById('poopDate').value,
+            time: document.getElementById('poopTime').value,
+            status: document.getElementById('poopStatus').value,
+            notes: document.getElementById('poopNotes').value
         }));
 
         handleFormSubmit('trainingForm', 'training', () => ({
@@ -979,15 +1039,6 @@
             medicalTitle: document.getElementById('medicalTitle').value,
             medicalNotes: document.getElementById('medicalNotes').value
         }));
-
-        // 其他功能
-        function deleteRecord(type, id) {
-            if (confirm('確定要刪除嗎？')) {
-                appData.records[type] = appData.records[type].filter(r => r.id !== id);
-                saveData();
-                refreshUI();
-            }
-        }
 
         function exportData() {
             const dataStr = JSON.stringify(appData, null, 2);
