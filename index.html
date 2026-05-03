@@ -6,6 +6,10 @@
     <title>布布的日常記錄</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Firebase SDK (Compat version for easier integration) -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-analytics-compat.js"></script>
     <style>
         * {
             margin: 0;
@@ -37,6 +41,30 @@
             text-align: center;
             color: white;
             margin-bottom: 30px;
+            position: relative;
+        }
+
+        #connection-status {
+            font-size: 12px;
+            padding: 5px 12px;
+            border-radius: 15px;
+            background: rgba(0,0,0,0.3);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 10px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #ff4b4b; /* 預設紅色 */
+        }
+
+        .status-dot.online {
+            background: #00ff88;
+            box-shadow: 0 0 8px #00ff88;
         }
 
         h1 {
@@ -297,6 +325,11 @@
             <h1>🐾 布布的日常記錄</h1>
             <div class="pet-info">
                 當前寵物：布布
+            </div>
+            <br>
+            <div id="connection-status">
+                <span class="status-dot" id="status-dot"></span>
+                <span id="status-text">正在連接雲端...</span>
             </div>
         </header>
         
@@ -574,6 +607,24 @@
     </div>
 
     <script>
+        // --- Firebase 配置 ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyC2L2TrURXoD6-fyrXvqHREuRCftQIb-74",
+            authDomain: "bubudaily-cb326.firebaseapp.com",
+            databaseURL: "https://bubudaily-cb326-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "bubudaily-cb326",
+            storageBucket: "bubudaily-cb326.firebasestorage.app",
+            messagingSenderId: "386421313456",
+            appId: "1:386421313456:web:a8b18694cc2ca95a029075",
+            measurementId: "G-HYBBL00V4Y"
+        };
+
+        // 初始化 Firebase
+        firebase.initializeApp(firebaseConfig);
+        firebase.analytics(); // 初始化 Analytics
+        const db = firebase.firestore();
+        const docRef = db.collection("petRecords").doc("Bubu");
+
         // 核心數據結構 - 固定為布布
         let appData = {
             petName: "布布",
@@ -590,8 +641,9 @@
 
         // 初始化
         document.addEventListener('DOMContentLoaded', () => {
-            loadData();
-            refreshUI();
+            initFirebaseSync();
+            // loadData(); // 改用 initFirebaseSync
+            // refreshUI(); // onSnapshot 會觸發第一次渲染
             
             // 設置所有日期為今天
             const today = new Date().toISOString().split('T')[0];
@@ -600,8 +652,71 @@
             });
         });
 
+        // --- Firebase 同步邏輯 ---
+        function updateStatus(isOnline) {
+            const dot = document.getElementById('status-dot');
+            const text = document.getElementById('status-text');
+            if (isOnline) {
+                dot.classList.add('online');
+                text.textContent = "雲端同步中";
+            } else {
+                dot.classList.remove('online');
+                text.textContent = "離線模式 / 連接失敗";
+            }
+        }
+
+        function initFirebaseSync() {
+            console.log("正在嘗試連接 Firebase...");
+            updateStatus(false);
+            
+            // 監聽 Firebase 數據變動
+            docRef.onSnapshot((doc) => {
+                updateStatus(true);
+                if (doc.exists) {
+                    appData = doc.data();
+                    console.log("✅ 數據已從 Firebase 更新", appData);
+                    refreshUI();
+                } else {
+                    console.log("ℹ️ Firebase 無數據，正在嘗試從本地遷移...");
+                    loadFromLocalStorageOrInit();
+                }
+            }, (error) => {
+                updateStatus(false);
+                console.error("❌ Firebase 監聽失敗:", error);
+                if (error.code === 'permission-denied') {
+                    // alert("Firebase 權限不足或 API 未啟用，請檢查控制台設定。");
+                }
+                loadFromLocalStorageOrInit();
+            });
+        }
+
+        async function loadFromLocalStorageOrInit() {
+            const saved = localStorage.getItem('petRecordsPro_Bubu');
+            if (saved) {
+                appData = JSON.parse(saved);
+                refreshUI(); // 立即顯示本地數據
+                await saveData(); // 同步到 Firebase
+            } else {
+                await loadData(); 
+            }
+        }
+
         // 數據管理
-        function loadData() {
+        async function saveData() {
+            // 同時保存到本地和 Firebase
+            localStorage.setItem('petRecordsPro_Bubu', JSON.stringify(appData));
+            try {
+                if (typeof docRef !== 'undefined') {
+                    await docRef.set(appData);
+                    console.log("✅ 數據已成功同步到 Firebase");
+                }
+            } catch (e) {
+                console.error("❌ 同步到 Firebase 失敗:", e);
+            }
+        }
+
+        async function loadData() {
+            console.log("正在加載初始預設數據...");
             const saved = localStorage.getItem('petRecordsPro_Bubu');
             
             const initialRecords = {
@@ -699,11 +814,8 @@
             } else {
                 appData.records = initialRecords;
             }
-            saveData();
-        }
-
-        function saveData() {
-            localStorage.setItem('petRecordsPro_Bubu', JSON.stringify(appData));
+            refreshUI(); // 確保 UI 在數據加載後更新
+            await saveData();
         }
 
         function refreshUI() {
@@ -984,19 +1096,19 @@
             if (confirm('確定要刪除嗎？')) {
                 appData.records[type] = appData.records[type].filter(r => r.id !== id);
                 saveData();
-                refreshUI();
+                // refreshUI(); // onSnapshot 會處理渲染
             }
         }
 
         function handleFormSubmit(formId, type, getFieldsFn) {
             const form = document.getElementById(formId);
             if (!form) return;
-            form.addEventListener('submit', (e) => {
+            form.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const record = { id: Date.now(), ...getFieldsFn() };
                 appData.records[type].push(record);
-                saveData();
-                refreshUI();
+                await saveData();
+                // refreshUI(); // onSnapshot 會處理渲染
                 e.target.reset();
                 const today = new Date().toISOString().split('T')[0];
                 const dateInput = e.target.querySelector('input[type="date"]');
@@ -1057,13 +1169,14 @@
             const file = event.target.files[0];
             if (!file) return;
             const reader = new FileReader();
-            reader.onload = (e) => {
+            reader.onload = async (e) => {
                 try {
                     const imported = JSON.parse(e.target.result);
                     if (imported.records) {
                         appData = imported;
-                        saveData();
-                        location.reload();
+                        await saveData();
+                        alert('數據導入成功！');
+                        // location.reload(); // 不需要 reload，onSnapshot 會更新 UI
                     } else {
                         alert('無效的數據格式');
                     }
