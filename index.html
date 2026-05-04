@@ -285,6 +285,121 @@
             display: none;
         }
 
+        /* 照片相關樣式 */
+        .photo-upload-group {
+            margin-top: 15px;
+            border: 2px dashed #e0e0e0;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .photo-upload-group:hover {
+            border-color: var(--primary-color);
+            background: #fcfcfc;
+        }
+
+        .photo-preview-container {
+            margin-top: 10px;
+            display: none;
+            position: relative;
+        }
+
+        .photo-preview {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .remove-photo-btn {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background: #ff4b4b;
+            color: white;
+            border: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .record-photo-thumb {
+            width: 40px;
+            height: 40px;
+            object-fit: cover;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .record-photo-thumb:hover {
+            transform: scale(1.1);
+        }
+
+        .record-video-thumb {
+            width: 40px;
+            height: 40px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: #f0f0f0;
+            border-radius: 4px;
+            cursor: pointer;
+            color: var(--primary-color);
+            transition: transform 0.2s;
+        }
+
+        .record-video-thumb:hover {
+            transform: scale(1.1);
+            background: #e0e0e0;
+        }
+
+        /* 影片預覽樣式 */
+        .video-preview-container {
+            margin-top: 10px;
+            display: none;
+            position: relative;
+        }
+
+        .video-preview {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        /* 圖片/影片放大彈窗 */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(5px);
+            justify-content: center;
+            align-items: center;
+            cursor: zoom-out;
+        }
+
+        .modal-content {
+            max-width: 90%;
+            max-height: 90%;
+            border-radius: 10px;
+            box-shadow: 0 0 30px rgba(0,0,0,0.5);
+        }
+
         .record-item { display: none; } /* 隱藏舊的格子樣式 */
 
         .stats-grid {
@@ -415,6 +530,21 @@
                             <label for="foodContent">備註</label>
                             <textarea id="foodContent" placeholder="例如：雞胸肉、益生菌..."></textarea>
                         </div>
+                        
+                        <!-- 照片上傳 -->
+                        <div class="form-group">
+                            <label>喂食照片 (可選)</label>
+                            <div class="photo-upload-group" onclick="document.getElementById('feedingPhotoInput').click()">
+                                <i class="fas fa-camera" style="font-size: 24px; color: #ccc; margin-bottom: 8px;"></i>
+                                <p style="font-size: 12px; color: #999;">點擊上傳照片</p>
+                                <input type="file" id="feedingPhotoInput" accept="image/*" style="display: none" onchange="handlePhotoSelect(event, 'feeding')">
+                            </div>
+                            <div id="feedingPhotoPreviewContainer" class="photo-preview-container">
+                                <img id="feedingPhotoPreview" class="photo-preview">
+                                <button type="button" class="remove-photo-btn" onclick="removeSelectedPhoto('feeding')"><i class="fas fa-times"></i></button>
+                            </div>
+                        </div>
+
                         <button type="submit" class="btn btn-primary" style="padding: 8px;"><i class="fas fa-save"></i> <span class="submit-text">保存喂食</span></button>
                         <button type="button" class="btn btn-secondary cancel-edit-btn" onclick="cancelEdit('feeding')">取消修改</button>
                     </form>
@@ -451,6 +581,21 @@
                             <label for="poopNotes">觀察備註</label>
                             <textarea id="poopNotes" placeholder="記錄顏色、氣味或特殊情況..."></textarea>
                         </div>
+
+                        <!-- 照片上傳 -->
+                        <div class="form-group">
+                            <label>排便照片 (可選)</label>
+                            <div class="photo-upload-group" onclick="document.getElementById('poopPhotoInput').click()">
+                                <i class="fas fa-camera" style="font-size: 24px; color: #ccc; margin-bottom: 8px;"></i>
+                                <p style="font-size: 12px; color: #999;">點擊上傳大便照片</p>
+                                <input type="file" id="poopPhotoInput" accept="image/*" style="display: none" onchange="handlePhotoSelect(event, 'poop')">
+                            </div>
+                            <div id="poopPhotoPreviewContainer" class="photo-preview-container">
+                                <img id="poopPhotoPreview" class="photo-preview">
+                                <button type="button" class="remove-photo-btn" onclick="removeSelectedPhoto('poop')"><i class="fas fa-times"></i></button>
+                            </div>
+                        </div>
+
                         <button type="submit" class="btn btn-primary" style="background: linear-gradient(135deg, #8d6e63 0%, #5d4037 100%); padding: 8px;"><i class="fas fa-save"></i> <span class="submit-text">保存排便</span></button>
                         <button type="button" class="btn btn-secondary cancel-edit-btn" onclick="cancelEdit('poop')">取消修改</button>
                     </form>
@@ -507,6 +652,35 @@
                     <label for="trainingNotes">備註</label>
                     <textarea id="trainingNotes" placeholder="記錄細節..."></textarea>
                 </div>
+
+                <!-- 照片上傳 -->
+                <div class="form-group">
+                    <label>訓練照片 (可選)</label>
+                    <div class="photo-upload-group" onclick="document.getElementById('trainingPhotoInput').click()">
+                        <i class="fas fa-camera" style="font-size: 24px; color: #ccc; margin-bottom: 8px;"></i>
+                        <p style="font-size: 12px; color: #999;">點擊上傳照片</p>
+                        <input type="file" id="trainingPhotoInput" accept="image/*" style="display: none" onchange="handlePhotoSelect(event, 'training')">
+                    </div>
+                    <div id="trainingPhotoPreviewContainer" class="photo-preview-container">
+                        <img id="trainingPhotoPreview" class="photo-preview">
+                        <button type="button" class="remove-photo-btn" onclick="removeSelectedPhoto('training')"><i class="fas fa-times"></i></button>
+                    </div>
+                </div>
+
+                <!-- 影片上傳 -->
+                <div class="form-group">
+                    <label>訓練影片 (可選)</label>
+                    <div class="photo-upload-group" onclick="document.getElementById('trainingVideoInput').click()">
+                        <i class="fas fa-video" style="font-size: 24px; color: #ccc; margin-bottom: 8px;"></i>
+                        <p style="font-size: 12px; color: #999;">點擊上傳影片</p>
+                        <input type="file" id="trainingVideoInput" accept="video/*" style="display: none" onchange="handleVideoSelect(event, 'training')">
+                    </div>
+                    <div id="trainingVideoPreviewContainer" class="video-preview-container">
+                        <video id="trainingVideoPreview" class="video-preview" controls></video>
+                        <button type="button" class="remove-photo-btn" onclick="removeSelectedVideo('training')"><i class="fas fa-times"></i></button>
+                    </div>
+                </div>
+
                 <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> <span class="submit-text">保存記錄</span></button>
                 <button type="button" class="btn btn-secondary cancel-edit-btn" onclick="cancelEdit('training')">取消修改</button>
             </form>
@@ -552,6 +726,21 @@
                     <label for="growthNotes">備註</label>
                     <textarea id="growthNotes" placeholder="記錄飲食變化或其他因素..."></textarea>
                 </div>
+
+                <!-- 照片上傳 -->
+                <div class="form-group">
+                    <label>生長照片 (可選)</label>
+                    <div class="photo-upload-group" onclick="document.getElementById('growthPhotoInput').click()">
+                        <i class="fas fa-camera" style="font-size: 24px; color: #ccc; margin-bottom: 8px;"></i>
+                        <p style="font-size: 12px; color: #999;">點擊上傳照片</p>
+                        <input type="file" id="growthPhotoInput" accept="image/*" style="display: none" onchange="handlePhotoSelect(event, 'growth')">
+                    </div>
+                    <div id="growthPhotoPreviewContainer" class="photo-preview-container">
+                        <img id="growthPhotoPreview" class="photo-preview">
+                        <button type="button" class="remove-photo-btn" onclick="removeSelectedPhoto('growth')"><i class="fas fa-times"></i></button>
+                    </div>
+                </div>
+
                 <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> <span class="submit-text">保存記錄</span></button>
                 <button type="button" class="btn btn-secondary cancel-edit-btn" onclick="cancelEdit('growth')">取消修改</button>
             </form>
@@ -587,6 +776,21 @@
                     <label for="medicalNotes">詳情/醫囑</label>
                     <textarea id="medicalNotes" placeholder="記錄詳情、下次預約時間等..."></textarea>
                 </div>
+
+                <!-- 照片上傳 -->
+                <div class="form-group">
+                    <label>醫療照片 (可選)</label>
+                    <div class="photo-upload-group" onclick="document.getElementById('medicalPhotoInput').click()">
+                        <i class="fas fa-camera" style="font-size: 24px; color: #ccc; margin-bottom: 8px;"></i>
+                        <p style="font-size: 12px; color: #999;">點擊上傳照片</p>
+                        <input type="file" id="medicalPhotoInput" accept="image/*" style="display: none" onchange="handlePhotoSelect(event, 'medical')">
+                    </div>
+                    <div id="medicalPhotoPreviewContainer" class="photo-preview-container">
+                        <img id="medicalPhotoPreview" class="photo-preview">
+                        <button type="button" class="remove-photo-btn" onclick="removeSelectedPhoto('medical')"><i class="fas fa-times"></i></button>
+                    </div>
+                </div>
+
                 <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> <span class="submit-text">保存記錄</span></button>
                 <button type="button" class="btn btn-secondary cancel-edit-btn" onclick="cancelEdit('medical')">取消修改</button>
             </form>
@@ -630,6 +834,12 @@
         </div>
     </div>
 
+    <!-- 圖片/影片放大彈窗 -->
+    <div id="imageModal" class="modal" onclick="closeImageModal()">
+        <img class="modal-content" id="modalImg" style="display: none;">
+        <video class="modal-content" id="modalVideo" controls style="display: none;" onclick="event.stopPropagation()"></video>
+    </div>
+
     <script>
         // --- Firebase 配置 ---
         const firebaseConfig = {
@@ -648,6 +858,25 @@
         firebase.analytics(); // 初始化 Analytics
         const db = firebase.firestore();
         const docRef = db.collection("petRecords").doc("Bubu");
+
+        // --- Cloudinary 配置 ---
+        const cloudinaryConfig = {
+            cloudName: 'dajjuf2dc', // 您提供的 Cloud Name
+            uploadPreset: 'bubudaily' // 您提供的 Upload Preset
+        };
+
+        // 用於存儲當前選擇但尚未上傳的文件
+        let selectedPhotos = {
+            feeding: null,
+            poop: null,
+            training: null,
+            growth: null,
+            medical: null
+        };
+
+        let selectedVideos = {
+            training: null
+        };
 
         // 核心數據結構 - 固定為布布
         let appData = {
@@ -676,6 +905,138 @@
                 input.value = today;
             });
         });
+
+        // --- 照片處理邏輯 ---
+        function handlePhotoSelect(event, type) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            // 檢查檔案類型
+            if (!file.type.startsWith('image/')) {
+                alert('請選擇圖片檔案');
+                return;
+            }
+
+            // 檢查檔案大小 (例如限制 5MB)
+            if (file.size > 5 * 1024 * 1024) {
+                alert('圖片太大，請選擇 5MB 以下的圖片');
+                return;
+            }
+
+            selectedPhotos[type] = file;
+
+            // 預覽圖片
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const preview = document.getElementById(`${type}PhotoPreview`);
+                const container = document.getElementById(`${type}PhotoPreviewContainer`);
+                preview.src = e.target.result;
+                container.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function removeSelectedPhoto(type) {
+            selectedPhotos[type] = null;
+            document.getElementById(`${type}PhotoInput`).value = '';
+            document.getElementById(`${type}PhotoPreviewContainer`).style.display = 'none';
+            document.getElementById(`${type}PhotoPreview`).src = '';
+        }
+
+        function handleVideoSelect(event, type) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            if (!file.type.startsWith('video/')) {
+                alert('請選擇影片檔案');
+                return;
+            }
+
+            if (file.size > 20 * 1024 * 1024) {
+                alert('影片太大，請選擇 20MB 以下的影片');
+                return;
+            }
+
+            selectedVideos[type] = file;
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const preview = document.getElementById(`${type}VideoPreview`);
+                const container = document.getElementById(`${type}VideoPreviewContainer`);
+                preview.src = e.target.result;
+                container.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function removeSelectedVideo(type) {
+            selectedVideos[type] = null;
+            document.getElementById(`${type}VideoInput`).value = '';
+            document.getElementById(`${type}VideoPreviewContainer`).style.display = 'none';
+            document.getElementById(`${type}VideoPreview`).src = '';
+        }
+
+        async function uploadToCloudinary(file, resourceType = 'image') {
+            if (!file) return null;
+            if (!cloudinaryConfig.cloudName || cloudinaryConfig.cloudName === 'YOUR_CLOUD_NAME') {
+                console.warn('Cloudinary 未配置');
+                return null;
+            }
+
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('upload_preset', cloudinaryConfig.uploadPreset);
+
+            try {
+                const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudinaryConfig.cloudName}/${resourceType}/upload`, {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+                if (data.secure_url) {
+                    return data.secure_url;
+                } else {
+                    console.error('Cloudinary 上傳錯誤:', data);
+                    alert('上傳失敗，請檢查 Cloudinary 設定');
+                    return null;
+                }
+            } catch (err) {
+                console.error('上傳請求出錯:', err);
+                alert('連線 Cloudinary 出錯');
+                return null;
+            }
+        }
+
+        function openImageModal(src) {
+            const modal = document.getElementById('imageModal');
+            const modalImg = document.getElementById('modalImg');
+            const modalVideo = document.getElementById('modalVideo');
+            
+            modal.style.display = "flex";
+            modalImg.style.display = "block";
+            modalVideo.style.display = "none";
+            modalImg.src = src;
+        }
+
+        function openVideoModal(src) {
+            const modal = document.getElementById('imageModal');
+            const modalImg = document.getElementById('modalImg');
+            const modalVideo = document.getElementById('modalVideo');
+            
+            modal.style.display = "flex";
+            modalImg.style.display = "none";
+            modalVideo.style.display = "block";
+            modalVideo.src = src;
+            modalVideo.play();
+        }
+
+        function closeImageModal() {
+            const modal = document.getElementById('imageModal');
+            const modalVideo = document.getElementById('modalVideo');
+            modalVideo.pause();
+            modalVideo.src = "";
+            modal.style.display = "none";
+        }
 
         // --- Firebase 同步邏輯 ---
         function updateStatus(isOnline) {
@@ -1036,7 +1397,8 @@
         }
 
         function renderAllLists() {
-            renderList('feeding', 'feedingList', ['日期', '時間', '類型', '分量', '備註'], item => `
+            renderList('feeding', 'feedingList', ['照片', '日期', '時間', '類型', '分量', '備註'], item => `
+                <td>${item.photoUrl ? `<img src="${item.photoUrl}" class="record-photo-thumb" onclick="openImageModal('${item.photoUrl}')">` : '<span style="color:#ccc;font-size:10px;">無照片</span>'}</td>
                 <td>${item.date}</td>
                 <td>${item.time}</td>
                 <td>${item.foodType}</td>
@@ -1044,14 +1406,20 @@
                 <td>${item.foodContent || ''}</td>
             `);
 
-            renderList('poop', 'poopList', ['日期', '時間', '狀態', '觀察備註'], item => `
+            renderList('poop', 'poopList', ['照片', '日期', '時間', '狀態', '觀察備註'], item => `
+                <td>${item.photoUrl ? `<img src="${item.photoUrl}" class="record-photo-thumb" onclick="openImageModal('${item.photoUrl}')">` : '<span style="color:#ccc;font-size:10px;">無照片</span>'}</td>
                 <td style="color: #8d6e63; font-weight: bold;"><i class="fas fa-poop"></i> ${item.date}</td>
                 <td>${item.time}</td>
                 <td><span style="background: #efebe9; padding: 2px 6px; border-radius: 4px;">${item.status}</span></td>
                 <td>${item.notes || ''}</td>
             `);
 
-            renderList('training', 'trainingList', ['日期', '時間', '項目', '時長(min)', '進展', '備註'], item => `
+            renderList('training', 'trainingList', ['媒體', '日期', '時間', '項目', '時長(min)', '進展', '備註'], item => `
+                <td>
+                    ${item.photoUrl ? `<img src="${item.photoUrl}" class="record-photo-thumb" onclick="openImageModal('${item.photoUrl}')">` : ''}
+                    ${item.videoUrl ? `<div class="record-video-thumb" onclick="openVideoModal('${item.videoUrl}')"><i class="fas fa-play"></i></div>` : ''}
+                    ${!item.photoUrl && !item.videoUrl ? '<span style="color:#ccc;font-size:10px;">無媒體</span>' : ''}
+                </td>
                 <td>${item.date}</td>
                 <td>${item.time}</td>
                 <td>${item.commandType}</td>
@@ -1060,7 +1428,8 @@
                 <td>${item.notes || ''}</td>
             `);
 
-            renderList('growth', 'growthList', ['日期', '體重(kg)', '身高(cm)', '體態', '備註'], item => `
+            renderList('growth', 'growthList', ['照片', '日期', '體重(kg)', '身高(cm)', '體態', '備註'], item => `
+                <td>${item.photoUrl ? `<img src="${item.photoUrl}" class="record-photo-thumb" onclick="openImageModal('${item.photoUrl}')">` : '<span style="color:#ccc;font-size:10px;">無照片</span>'}</td>
                 <td>${item.date}</td>
                 <td>${item.weight}</td>
                 <td>${item.height || '--'}</td>
@@ -1068,7 +1437,8 @@
                 <td>${item.notes || ''}</td>
             `);
 
-            renderList('medical', 'medicalList', ['日期', '類型', '項目內容', '備註/醫囑'], item => `
+            renderList('medical', 'medicalList', ['照片', '日期', '類型', '項目內容', '備註/醫囑'], item => `
+                <td>${item.photoUrl ? `<img src="${item.photoUrl}" class="record-photo-thumb" onclick="openImageModal('${item.photoUrl}')">` : '<span style="color:#ccc;font-size:10px;">無照片</span>'}</td>
                 <td>${item.date}</td>
                 <td>${item.medicalType}</td>
                 <td>${item.medicalTitle}</td>
@@ -1144,11 +1514,29 @@
                 document.getElementById('foodType').value = record.foodType;
                 document.getElementById('foodAmount').value = record.foodAmount;
                 document.getElementById('foodContent').value = record.foodContent || '';
+                // 顯示已有的照片
+                const preview = document.getElementById('feedingPhotoPreview');
+                const container = document.getElementById('feedingPhotoPreviewContainer');
+                if (record.photoUrl) {
+                    preview.src = record.photoUrl;
+                    container.style.display = 'block';
+                } else {
+                    container.style.display = 'none';
+                }
             } else if (type === 'poop') {
                 document.getElementById('poopDate').value = record.date;
                 document.getElementById('poopTime').value = record.time;
                 document.getElementById('poopStatus').value = record.status;
                 document.getElementById('poopNotes').value = record.notes || '';
+                // 顯示已有的照片
+                const preview = document.getElementById('poopPhotoPreview');
+                const container = document.getElementById('poopPhotoPreviewContainer');
+                if (record.photoUrl) {
+                    preview.src = record.photoUrl;
+                    container.style.display = 'block';
+                } else {
+                    container.style.display = 'none';
+                }
             } else if (type === 'training') {
                 document.getElementById('trainingDate').value = record.date;
                 document.getElementById('trainingTime').value = record.time;
@@ -1156,17 +1544,53 @@
                 document.getElementById('trainingDuration').value = record.duration;
                 document.getElementById('trainingProgress').value = record.progress;
                 document.getElementById('trainingNotes').value = record.notes || '';
+                // 顯示已有的照片
+                const preview = document.getElementById('trainingPhotoPreview');
+                const container = document.getElementById('trainingPhotoPreviewContainer');
+                if (record.photoUrl) {
+                    preview.src = record.photoUrl;
+                    container.style.display = 'block';
+                } else {
+                    container.style.display = 'none';
+                }
+                // 顯示已有的影片
+                const videoPreview = document.getElementById('trainingVideoPreview');
+                const videoContainer = document.getElementById('trainingVideoPreviewContainer');
+                if (record.videoUrl) {
+                    videoPreview.src = record.videoUrl;
+                    videoContainer.style.display = 'block';
+                } else {
+                    videoContainer.style.display = 'none';
+                }
             } else if (type === 'growth') {
                 document.getElementById('growthDate').value = record.date;
                 document.getElementById('weight').value = record.weight;
                 document.getElementById('height').value = record.height || '';
                 document.getElementById('bodyCondition').value = record.bodyCondition;
                 document.getElementById('growthNotes').value = record.notes || '';
+                // 顯示已有的照片
+                const preview = document.getElementById('growthPhotoPreview');
+                const container = document.getElementById('growthPhotoPreviewContainer');
+                if (record.photoUrl) {
+                    preview.src = record.photoUrl;
+                    container.style.display = 'block';
+                } else {
+                    container.style.display = 'none';
+                }
             } else if (type === 'medical') {
                 document.getElementById('medicalDate').value = record.date;
                 document.getElementById('medicalType').value = record.medicalType;
                 document.getElementById('medicalTitle').value = record.medicalTitle;
                 document.getElementById('medicalNotes').value = record.medicalNotes || '';
+                // 顯示已有的照片
+                const preview = document.getElementById('medicalPhotoPreview');
+                const container = document.getElementById('medicalPhotoPreviewContainer');
+                if (record.photoUrl) {
+                    preview.src = record.photoUrl;
+                    container.style.display = 'block';
+                } else {
+                    container.style.display = 'none';
+                }
             }
 
             // 更新 UI
@@ -1180,8 +1604,22 @@
 
         function cancelEdit(type) {
             editingContext = null;
+            selectedPhotos[type] = null; // 清除選擇的照片
+            if (selectedVideos[type]) selectedVideos[type] = null; // 清除選擇的影片
+
             const form = document.getElementById(`${type}Form`);
             form.reset();
+            
+            // 隱藏照片預覽
+            const previewContainer = document.getElementById(`${type}PhotoPreviewContainer`);
+            if (previewContainer) previewContainer.style.display = 'none';
+
+            // 隱藏影片預覽
+            const videoContainer = document.getElementById(`${type}VideoPreviewContainer`);
+            if (videoContainer) videoContainer.style.display = 'none';
+            const videoPreview = document.getElementById(`${type}VideoPreview`);
+            if (videoPreview) videoPreview.src = '';
+
             form.querySelector('.submit-text').textContent = type === 'feeding' ? '保存喂食' : type === 'poop' ? '保存排便' : '保存記錄';
             form.querySelector('.cancel-edit-btn').style.display = 'none';
             
@@ -1197,32 +1635,74 @@
             form.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 
-                const formData = getFieldsFn();
-                
-                if (editingContext && editingContext.type === type) {
-                    // 更新模式
-                    const index = appData.records[type].findIndex(r => r.id === editingContext.id);
-                    if (index !== -1) {
-                        appData.records[type][index] = { ...appData.records[type][index], ...formData };
+                // 顯示上傳中狀態
+                const submitBtn = form.querySelector('button[type="submit"]');
+                const originalBtnHtml = submitBtn.innerHTML;
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 上傳中...';
+
+                try {
+                    const formData = getFieldsFn();
+                    
+                    // 處理照片上傳 (Cloudinary)
+                    if (selectedPhotos[type]) {
+                        const photoUrl = await uploadToCloudinary(selectedPhotos[type], 'image');
+                        if (photoUrl) {
+                            formData.photoUrl = photoUrl;
+                        }
+                    } else if (editingContext && editingContext.type === type) {
+                        const existingRecord = appData.records[type].find(r => r.id === editingContext.id);
+                        if (existingRecord && existingRecord.photoUrl) {
+                            formData.photoUrl = existingRecord.photoUrl;
+                        }
                     }
-                    editingContext = null;
-                } else {
-                    // 新增模式
-                    const record = { id: Date.now(), ...formData };
-                    appData.records[type].push(record);
+
+                    // 處理影片上傳 (Cloudinary) - 目前僅訓練項支援
+                    if (type === 'training' && selectedVideos[type]) {
+                        const videoUrl = await uploadToCloudinary(selectedVideos[type], 'video');
+                        if (videoUrl) {
+                            formData.videoUrl = videoUrl;
+                        }
+                    } else if (type === 'training' && editingContext && editingContext.type === type) {
+                        const existingRecord = appData.records[type].find(r => r.id === editingContext.id);
+                        if (existingRecord && existingRecord.videoUrl) {
+                            formData.videoUrl = existingRecord.videoUrl;
+                        }
+                    }
+
+                    if (editingContext && editingContext.type === type) {
+                        // 更新模式
+                        const index = appData.records[type].findIndex(r => r.id === editingContext.id);
+                        if (index !== -1) {
+                            appData.records[type][index] = { ...appData.records[type][index], ...formData };
+                        }
+                        editingContext = null;
+                    } else {
+                        // 新增模式
+                        const record = { id: Date.now(), ...formData };
+                        appData.records[type].push(record);
+                    }
+
+                    await saveData();
+                    
+                    form.reset();
+                    selectedPhotos[type] = null;
+                    const previewContainer = document.getElementById(`${type}PhotoPreviewContainer`);
+                    if (previewContainer) previewContainer.style.display = 'none';
+
+                    form.querySelector('.submit-text').textContent = type === 'feeding' ? '保存喂食' : type === 'poop' ? '保存排便' : '保存記錄';
+                    const cancelBtn = form.querySelector('.cancel-edit-btn');
+                    if (cancelBtn) cancelBtn.style.display = 'none';
+
+                    const today = new Date().toISOString().split('T')[0];
+                    const dateInput = e.target.querySelector('input[type="date"]');
+                    if (dateInput) dateInput.value = today;
+                } catch (err) {
+                    console.error('提交失敗:', err);
+                } finally {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalBtnHtml;
                 }
-
-                await saveData();
-                // refreshUI(); // onSnapshot 會處理渲染
-                
-                form.reset();
-                form.querySelector('.submit-text').textContent = type === 'feeding' ? '保存喂食' : type === 'poop' ? '保存排便' : '保存記錄';
-                const cancelBtn = form.querySelector('.cancel-edit-btn');
-                if (cancelBtn) cancelBtn.style.display = 'none';
-
-                const today = new Date().toISOString().split('T')[0];
-                const dateInput = e.target.querySelector('input[type="date"]');
-                if (dateInput) dateInput.value = today;
             });
         }
 
@@ -1270,11 +1750,11 @@
             
             // Define headers for each category
             const categories = {
-                feeding: ["類別", "日期", "時間", "食物類型", "分量", "備註"],
-                poop: ["類別", "日期", "時間", "狀態", "觀察備註", ""],
-                training: ["類別", "日期", "時間", "項目", "時長(min)", "進展", "備註"],
-                growth: ["類別", "日期", "體重(kg)", "身高(cm)", "體態", "備註"],
-                medical: ["類別", "日期", "醫療類型", "項目內容", "詳情/醫囑", ""]
+                feeding: ["類別", "日期", "時間", "食物類型", "分量", "備註", "照片網址"],
+                poop: ["類別", "日期", "時間", "狀態", "觀察備註", "", "照片網址"],
+                training: ["類別", "日期", "時間", "項目", "時長(min)", "進展", "備註", "照片網址", "影片網址"],
+                growth: ["類別", "日期", "體重(kg)", "身高(cm)", "體態", "備註", "照片網址"],
+                medical: ["類別", "日期", "醫療類型", "項目內容", "詳情/醫囑", "", "照片網址"]
             };
 
             const categoryNames = {
@@ -1296,15 +1776,15 @@
                 records.forEach(r => {
                     let row = [categoryNames[cat]];
                     if (cat === 'feeding') {
-                        row.push(r.date, r.time, r.foodType, r.foodAmount, (r.foodContent || "").replace(/,/g, "，"));
+                        row.push(r.date, r.time, r.foodType, r.foodAmount, (r.foodContent || "").replace(/,/g, "，"), r.photoUrl || "");
                     } else if (cat === 'poop') {
-                        row.push(r.date, r.time, r.status, (r.notes || "").replace(/,/g, "，"));
+                        row.push(r.date, r.time, r.status, (r.notes || "").replace(/,/g, "，"), "", r.photoUrl || "");
                     } else if (cat === 'training') {
-                        row.push(r.date, r.time, r.commandType, r.duration, r.progress, (r.notes || "").replace(/,/g, "，"));
+                        row.push(r.date, r.time, r.commandType, r.duration, r.progress, (r.notes || "").replace(/,/g, "，"), r.photoUrl || "", r.videoUrl || "");
                     } else if (cat === 'growth') {
-                        row.push(r.date, r.weight, r.height || "--", r.bodyCondition, (r.notes || "").replace(/,/g, "，"));
+                        row.push(r.date, r.weight, r.height || "--", r.bodyCondition, (r.notes || "").replace(/,/g, "，"), r.photoUrl || "");
                     } else if (cat === 'medical') {
-                        row.push(r.date, r.medicalType, r.medicalTitle, (r.medicalNotes || "").replace(/,/g, "，"));
+                        row.push(r.date, r.medicalType, r.medicalTitle, (r.medicalNotes || "").replace(/,/g, "，"), "", r.photoUrl || "");
                     }
                     csvContent += row.join(",") + "\n";
                 });
