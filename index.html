@@ -103,6 +103,145 @@
             font-size: 0.95em;
         }
 
+        .dog-calendar {
+            margin-top: 12px;
+            width: 100%;
+            max-width: 1040px;
+            margin-left: auto;
+            margin-right: auto;
+            background: rgba(255, 255, 255, 0.16);
+            padding: 12px 12px 10px;
+            border-radius: 16px;
+            backdrop-filter: blur(5px);
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .dog-calendar-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .dog-calendar-title {
+            font-weight: 800;
+            font-size: 0.95em;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+        }
+
+        .dog-calendar-nav {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .dog-calendar-nav-btn {
+            width: 34px;
+            height: 34px;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            background: rgba(255,255,255,0.9);
+            color: #444;
+            font-weight: 800;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .dog-calendar-month {
+            font-weight: 800;
+            font-size: 0.95em;
+            min-width: 110px;
+            text-align: center;
+        }
+
+        .dog-calendar-weekdays {
+            display: grid;
+            grid-template-columns: repeat(7, 100px);
+            gap: 6px;
+            margin-bottom: 6px;
+            font-size: 12px;
+            opacity: 0.95;
+            width: max-content;
+        }
+
+        .dog-calendar-weekdays div {
+            text-align: center;
+        }
+
+        .dog-calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 100px);
+            gap: 6px;
+            width: max-content;
+        }
+
+        .dog-calendar-cell {
+            aspect-ratio: 1 / 1;
+            border-radius: 12px;
+            background: rgba(255,255,255,0.22);
+            border: 1px solid rgba(255,255,255,0.22);
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .dog-calendar-cell.has-photo::after {
+            content: '替換';
+            position: absolute;
+            right: 6px;
+            bottom: 6px;
+            font-size: 11px;
+            font-weight: 900;
+            padding: 2px 6px;
+            border-radius: 10px;
+            background: rgba(0,0,0,0.35);
+            color: #fff;
+        }
+
+        .dog-calendar-cell.empty {
+            background: rgba(255,255,255,0.10);
+            border-color: rgba(255,255,255,0.10);
+            cursor: default;
+        }
+
+        .dog-calendar-date {
+            position: absolute;
+            top: 6px;
+            left: 6px;
+            font-size: 12px;
+            font-weight: 800;
+            background: rgba(0,0,0,0.25);
+            color: #fff;
+            padding: 2px 6px;
+            border-radius: 10px;
+        }
+
+        .dog-calendar-thumb {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .dog-calendar-plus {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255,255,255,0.95);
+            font-weight: 900;
+            font-size: 18px;
+            text-shadow: 0 2px 6px rgba(0,0,0,0.35);
+        }
+
         .grid-2 {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -457,7 +596,7 @@
         }
 
         .stat-card .value {
-            font-size: 32px;
+            font-size: 38px;
             font-weight: bold;
         }
 
@@ -492,6 +631,9 @@
             h1 { font-size: 1.8em; }
             .pet-info { font-size: 1em; padding: 8px 14px; }
             .pet-meta-badge { font-size: 0.9em; }
+            .dog-calendar { max-width: none; padding: 10px 10px 8px; }
+            .dog-calendar-nav-btn { width: 32px; height: 32px; border-radius: 10px; }
+            .dog-calendar-month { min-width: 96px; font-size: 0.9em; }
             .content-section { padding: 16px; border-radius: 16px; }
             .tab-btn { padding: 10px 12px; font-size: 14px; border-radius: 18px; flex: 1 1 calc(33.33% - 10px); }
             .grid-2 { grid-template-columns: 1fr; }
@@ -508,6 +650,21 @@
                 當前寵物：布布
             </div>
             <div id="petMeta" class="pet-meta"></div>
+            <div class="dog-calendar" id="dogCalendar">
+                <div class="dog-calendar-top">
+                    <div class="dog-calendar-title"><i class="fas fa-dog"></i> 今天的小狗</div>
+                    <div class="dog-calendar-nav">
+                        <button type="button" class="dog-calendar-nav-btn" onclick="changeDogCalendarMonth(-1)"><i class="fas fa-chevron-left"></i></button>
+                        <div class="dog-calendar-month" id="dogCalendarMonth"></div>
+                        <button type="button" class="dog-calendar-nav-btn" onclick="changeDogCalendarMonth(1)"><i class="fas fa-chevron-right"></i></button>
+                    </div>
+                </div>
+                <div class="dog-calendar-weekdays">
+                    <div>日</div><div>一</div><div>二</div><div>三</div><div>四</div><div>五</div><div>六</div>
+                </div>
+                <div class="dog-calendar-grid" id="dogCalendarGrid"></div>
+                <input type="file" id="dogCalendarInput" accept="image/*" style="display:none" onchange="handleDogCalendarFile(event)">
+            </div>
             <div id="connection-status">
                 <span class="status-dot" id="status-dot"></span>
                 <span id="status-text">正在連接雲端...</span>
@@ -527,9 +684,9 @@
         <div id="feeding" class="content-section active">
             <h2 style="margin-bottom: 20px; color: #333;"><i class="fas fa-utensils"></i> 喂食記錄</h2>
 
-            <div class="chart-container" style="margin: 0 0 20px 0;">
-                <div class="chart-title"><i class="fas fa-chart-bar"></i> 每日攝入量統計 (g)</div>
-                <canvas id="feedingChart"></canvas>
+            <div style="background: #fff; padding: 15px; border-radius: 15px; border: 1px solid #eee; box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-bottom: 20px;">
+                <div class="chart-title"><i class="fas fa-list-alt"></i> 每日攝入量統計</div>
+                <div id="feedingDailyTable" style="max-height: 260px; overflow-y: auto;"></div>
             </div>
 
             <div class="section-card">
@@ -559,8 +716,13 @@
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label for="foodAmount">分量</label>
-                                <input type="text" id="foodAmount" required placeholder="例如：250g">
+                                <label for="foodAmountValue">分量</label>
+                                <div style="display: grid; grid-template-columns: 1fr 90px; gap: 10px;">
+                                    <input type="number" id="foodAmountValue" min="0" step="0.1" required placeholder="例如：250">
+                                    <select id="foodAmountUnit" required>
+                                        <option value="g">g</option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
                         <div class="form-group">
@@ -922,9 +1084,26 @@
             training: null
         };
 
+        let removedPhotos = {
+            feeding: false,
+            poop: false,
+            training: false,
+            growth: false,
+            medical: false
+        };
+
+        let removedVideos = {
+            training: false
+        };
+
         // 核心數據結構 - 固定為布布
         let appData = {
             petName: "布布",
+            dailyDog: {
+                date: "",
+                photoUrl: ""
+            },
+            dailyDogPhotos: {},
             records: {
                 feeding: [],
                 poop: [],
@@ -999,10 +1178,121 @@
             `;
         }
 
+        function normalizeAppData() {
+            if (!appData) return;
+            if (!appData.records) {
+                appData.records = { feeding: [], poop: [], training: [], growth: [], medical: [] };
+            }
+            ['feeding', 'poop', 'training', 'growth', 'medical'].forEach(type => {
+                if (!Array.isArray(appData.records[type])) appData.records[type] = [];
+            });
+
+            if (!appData.dailyDog) appData.dailyDog = { date: "", photoUrl: "" };
+            if (!appData.dailyDog.date) appData.dailyDog.date = "";
+            if (!appData.dailyDog.photoUrl) appData.dailyDog.photoUrl = "";
+
+            if (!appData.dailyDogPhotos || typeof appData.dailyDogPhotos !== 'object') {
+                appData.dailyDogPhotos = {};
+            }
+            if (appData.dailyDog.date && appData.dailyDog.photoUrl && !appData.dailyDogPhotos[appData.dailyDog.date]) {
+                appData.dailyDogPhotos[appData.dailyDog.date] = appData.dailyDog.photoUrl;
+            }
+        }
+
+        let dogCalendarMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+        let dogCalendarSelectedDateStr = "";
+
+        function formatDateStr(date) {
+            const y = date.getFullYear();
+            const m = String(date.getMonth() + 1).padStart(2, '0');
+            const d = String(date.getDate()).padStart(2, '0');
+            return `${y}-${m}-${d}`;
+        }
+
+        function getMonthLabel(date) {
+            return `${date.getFullYear()}年${date.getMonth() + 1}月`;
+        }
+
+        function changeDogCalendarMonth(delta) {
+            dogCalendarMonth = new Date(dogCalendarMonth.getFullYear(), dogCalendarMonth.getMonth() + delta, 1);
+            renderDogCalendar();
+        }
+
+        function selectDogCalendarDate(dateStr) {
+            dogCalendarSelectedDateStr = dateStr;
+            document.getElementById('dogCalendarInput').click();
+        }
+
+        async function handleDogCalendarFile(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            if (!file.type.startsWith('image/')) {
+                alert('請選擇圖片檔案');
+                return;
+            }
+            if (file.size > 5 * 1024 * 1024) {
+                alert('圖片太大，請選擇 5MB 以下的圖片');
+                return;
+            }
+            if (!dogCalendarSelectedDateStr) return;
+
+            const prevText = document.getElementById('status-text');
+            const original = prevText ? prevText.textContent : '';
+            if (prevText) prevText.textContent = '上傳今日小狗中...';
+            try {
+                const url = await uploadToCloudinary(file, 'image');
+                if (!url) return;
+                normalizeAppData();
+                appData.dailyDogPhotos[dogCalendarSelectedDateStr] = url;
+                await saveData();
+                renderDogCalendar();
+            } finally {
+                if (prevText) prevText.textContent = original || prevText.textContent;
+                event.target.value = '';
+                dogCalendarSelectedDateStr = '';
+            }
+        }
+
+        function renderDogCalendar() {
+            const grid = document.getElementById('dogCalendarGrid');
+            const monthEl = document.getElementById('dogCalendarMonth');
+            if (!grid || !monthEl) return;
+
+            normalizeAppData();
+            monthEl.textContent = getMonthLabel(dogCalendarMonth);
+
+            const year = dogCalendarMonth.getFullYear();
+            const month = dogCalendarMonth.getMonth();
+            const first = new Date(year, month, 1);
+            const firstWeekday = first.getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+            let html = '';
+            for (let i = 0; i < firstWeekday; i += 1) {
+                html += `<div class="dog-calendar-cell empty"></div>`;
+            }
+            for (let day = 1; day <= daysInMonth; day += 1) {
+                const date = new Date(year, month, day);
+                const dateStr = formatDateStr(date);
+                const url = appData.dailyDogPhotos[dateStr];
+                html += `<div class="dog-calendar-cell${url ? ' has-photo' : ''}" onclick="selectDogCalendarDate('${dateStr}')">`;
+                html += `<div class="dog-calendar-date">${day}</div>`;
+                if (url) {
+                    html += `<img class="dog-calendar-thumb" src="${url}" onclick="event.stopPropagation(); openImageModal('${url}')">`;
+                } else {
+                    html += `<div class="dog-calendar-plus">+</div>`;
+                }
+                html += `</div>`;
+            }
+
+            grid.innerHTML = html;
+        }
+
         // 初始化
         document.addEventListener('DOMContentLoaded', () => {
             updatePetMeta();
             setInterval(updatePetMeta, 60 * 1000);
+            renderDogCalendar();
             initFirebaseSync();
             // loadData(); // 改用 initFirebaseSync
             // refreshUI(); // onSnapshot 會觸發第一次渲染
@@ -1032,6 +1322,7 @@
             }
 
             selectedPhotos[type] = file;
+            if (removedPhotos[type] !== undefined) removedPhotos[type] = false;
 
             // 預覽圖片
             const reader = new FileReader();
@@ -1049,6 +1340,9 @@
             document.getElementById(`${type}PhotoInput`).value = '';
             document.getElementById(`${type}PhotoPreviewContainer`).style.display = 'none';
             document.getElementById(`${type}PhotoPreview`).src = '';
+            if (editingContext && editingContext.type === type && removedPhotos[type] !== undefined) {
+                removedPhotos[type] = true;
+            }
         }
 
         function handleVideoSelect(event, type) {
@@ -1066,6 +1360,7 @@
             }
 
             selectedVideos[type] = file;
+            if (removedVideos[type] !== undefined) removedVideos[type] = false;
 
             const reader = new FileReader();
             reader.onload = (e) => {
@@ -1082,6 +1377,9 @@
             document.getElementById(`${type}VideoInput`).value = '';
             document.getElementById(`${type}VideoPreviewContainer`).style.display = 'none';
             document.getElementById(`${type}VideoPreview`).src = '';
+            if (editingContext && editingContext.type === type && removedVideos[type] !== undefined) {
+                removedVideos[type] = true;
+            }
         }
 
         async function uploadToCloudinary(file, resourceType = 'image') {
@@ -1168,6 +1466,7 @@
                 updateStatus(true);
                 if (doc.exists) {
                     appData = doc.data();
+                    normalizeAppData();
                     console.log("✅ 數據已從 Firebase 更新", appData);
                     refreshUI();
                 } else {
@@ -1188,6 +1487,7 @@
             const saved = localStorage.getItem('petRecordsPro_Bubu');
             if (saved) {
                 appData = JSON.parse(saved);
+                normalizeAppData();
                 refreshUI(); // 立即顯示本地數據
                 await saveData(); // 同步到 Firebase
             } else {
@@ -1313,6 +1613,7 @@
         }
 
         function refreshUI() {
+            renderDogCalendar();
             renderAllLists();
             updateStats();
             renderAllCharts();
@@ -1320,10 +1621,71 @@
 
         function renderAllCharts() {
             const activeTab = document.querySelector('.content-section.active').id;
-            if (activeTab === 'feeding') renderFeedingChart();
+            if (activeTab === 'feeding') renderFeedingDailySummary();
             if (activeTab === 'poop') renderPoopSummary();
             if (activeTab === 'growth') renderGrowthCharts();
             if (activeTab === 'statistics') renderSummaryChart();
+        }
+
+        function getFeedingAmountParts(record) {
+            if (record && record.foodAmountValue != null && record.foodAmountUnit) {
+                const value = Number(record.foodAmountValue);
+                return { value: Number.isFinite(value) ? value : 0, unit: 'g' };
+            }
+            const raw = (record && record.foodAmount) ? String(record.foodAmount).trim() : '';
+            const match = raw.match(/(\d+(\.\d+)?)/);
+            const value = match ? parseFloat(match[1]) : 0;
+            return { value: Number.isFinite(value) ? value : 0, unit: 'g' };
+        }
+
+        function getFeedingAmountText(record) {
+            const { value, unit } = getFeedingAmountParts(record);
+            if (!value) return record && record.foodAmount ? record.foodAmount : '';
+            return `${value}${unit}`;
+        }
+
+        function renderFeedingDailySummary() {
+            const container = document.getElementById('feedingDailyTable');
+            if (!container) return;
+
+            const items = (appData.records.feeding || []).slice().sort((a, b) => new Date(b.date + ' ' + (b.time || '00:00')) - new Date(a.date + ' ' + (a.time || '00:00')));
+            if (items.length === 0) {
+                container.innerHTML = '<div class="empty-state" style="padding: 20px;">尚無喂食紀錄</div>';
+                return;
+            }
+
+            const groups = {};
+            items.forEach(item => {
+                if (!groups[item.date]) groups[item.date] = { g: 0, count: 0 };
+                const { value } = getFeedingAmountParts(item);
+                groups[item.date].g += value;
+                groups[item.date].count += 1;
+            });
+
+            const dates = Object.keys(groups).sort((a, b) => new Date(b) - new Date(a)).slice(0, 14);
+            let html = `<table class="data-table" style="font-size: 12px;">
+                <thead>
+                    <tr>
+                        <th style="width: 100px;">日期</th>
+                        <th style="width: 110px;">總克重(g)</th>
+                        <th style="width: 70px;">次數</th>
+                    </tr>
+                </thead>
+                <tbody>`;
+
+            dates.forEach(date => {
+                const g = groups[date].g;
+                const count = groups[date].count;
+                html += `
+                    <tr>
+                        <td style="font-weight: 600;">${date.split('-').slice(1).join('/')}(${getDayOfWeek(date)})</td>
+                        <td>${g ? g.toFixed(1).replace(/\.0$/, '') : '--'}</td>
+                        <td>${count}</td>
+                    </tr>`;
+            });
+
+            html += `</tbody></table>`;
+            container.innerHTML = html;
         }
 
         function renderPoopSummary() {
@@ -1508,7 +1870,7 @@
                 <td>${item.date}</td>
                 <td>${item.time}</td>
                 <td>${item.foodType}</td>
-                <td>${item.foodAmount}</td>
+                <td>${getFeedingAmountText(item)}</td>
                 <td>${item.foodContent || ''}</td>
             `);
 
@@ -1612,13 +1974,19 @@
             if (!record) return;
 
             editingContext = { type, id };
+            if (selectedPhotos[type] !== undefined) selectedPhotos[type] = null;
+            if (removedPhotos[type] !== undefined) removedPhotos[type] = false;
+            if (selectedVideos[type] !== undefined) selectedVideos[type] = null;
+            if (removedVideos[type] !== undefined) removedVideos[type] = false;
             
             // 填充表單
             if (type === 'feeding') {
                 document.getElementById('feedingDate').value = record.date;
                 document.getElementById('feedingTime').value = record.time;
                 document.getElementById('foodType').value = record.foodType;
-                document.getElementById('foodAmount').value = record.foodAmount;
+                const amount = getFeedingAmountParts(record);
+                document.getElementById('foodAmountValue').value = amount.value || '';
+                document.getElementById('foodAmountUnit').value = amount.unit || 'g';
                 document.getElementById('foodContent').value = record.foodContent || '';
                 // 顯示已有的照片
                 const preview = document.getElementById('feedingPhotoPreview');
@@ -1711,7 +2079,9 @@
         function cancelEdit(type) {
             editingContext = null;
             selectedPhotos[type] = null; // 清除選擇的照片
-            if (selectedVideos[type]) selectedVideos[type] = null; // 清除選擇的影片
+            if (selectedVideos[type] !== undefined) selectedVideos[type] = null; // 清除選擇的影片
+            if (removedPhotos[type] !== undefined) removedPhotos[type] = false;
+            if (removedVideos[type] !== undefined) removedVideos[type] = false;
 
             const form = document.getElementById(`${type}Form`);
             form.reset();
@@ -1758,7 +2128,9 @@
                         }
                     } else if (editingContext && editingContext.type === type) {
                         const existingRecord = appData.records[type].find(r => r.id === editingContext.id);
-                        if (existingRecord && existingRecord.photoUrl) {
+                        if (removedPhotos[type]) {
+                            formData.photoUrl = '';
+                        } else if (existingRecord && existingRecord.photoUrl) {
                             formData.photoUrl = existingRecord.photoUrl;
                         }
                     }
@@ -1771,7 +2143,9 @@
                         }
                     } else if (type === 'training' && editingContext && editingContext.type === type) {
                         const existingRecord = appData.records[type].find(r => r.id === editingContext.id);
-                        if (existingRecord && existingRecord.videoUrl) {
+                        if (removedVideos[type]) {
+                            formData.videoUrl = '';
+                        } else if (existingRecord && existingRecord.videoUrl) {
                             formData.videoUrl = existingRecord.videoUrl;
                         }
                     }
@@ -1793,8 +2167,15 @@
                     
                     form.reset();
                     selectedPhotos[type] = null;
+                    if (removedPhotos[type] !== undefined) removedPhotos[type] = false;
+                    if (selectedVideos[type] !== undefined) selectedVideos[type] = null;
+                    if (removedVideos[type] !== undefined) removedVideos[type] = false;
                     const previewContainer = document.getElementById(`${type}PhotoPreviewContainer`);
                     if (previewContainer) previewContainer.style.display = 'none';
+                    const videoContainer = document.getElementById(`${type}VideoPreviewContainer`);
+                    if (videoContainer) videoContainer.style.display = 'none';
+                    const videoPreview = document.getElementById(`${type}VideoPreview`);
+                    if (videoPreview) videoPreview.src = '';
 
                     form.querySelector('.submit-text').textContent = type === 'feeding' ? '保存喂食' : type === 'poop' ? '保存排便' : '保存記錄';
                     const cancelBtn = form.querySelector('.cancel-edit-btn');
@@ -1816,7 +2197,9 @@
             date: document.getElementById('feedingDate').value,
             time: document.getElementById('feedingTime').value,
             foodType: document.getElementById('foodType').value,
-            foodAmount: document.getElementById('foodAmount').value,
+            foodAmountValue: document.getElementById('foodAmountValue').value,
+            foodAmountUnit: document.getElementById('foodAmountUnit').value,
+            foodAmount: `${document.getElementById('foodAmountValue').value}${document.getElementById('foodAmountUnit').value}`,
             foodContent: document.getElementById('foodContent').value
         }));
 
@@ -1882,7 +2265,7 @@
                 records.forEach(r => {
                     let row = [categoryNames[cat]];
                     if (cat === 'feeding') {
-                        row.push(r.date, r.time, r.foodType, r.foodAmount, (r.foodContent || "").replace(/,/g, "，"), r.photoUrl || "");
+                        row.push(r.date, r.time, r.foodType, getFeedingAmountText(r), (r.foodContent || "").replace(/,/g, "，"), r.photoUrl || "");
                     } else if (cat === 'poop') {
                         row.push(r.date, r.time, r.status, (r.notes || "").replace(/,/g, "，"), "", r.photoUrl || "");
                     } else if (cat === 'training') {
