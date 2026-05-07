@@ -106,15 +106,13 @@
         .dog-calendar {
             margin-top: 12px;
             width: 100%;
-            max-width: 1040px;
+            max-width: 520px;
             margin-left: auto;
             margin-right: auto;
             background: rgba(255, 255, 255, 0.16);
             padding: 12px 12px 10px;
             border-radius: 16px;
             backdrop-filter: blur(5px);
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
         }
 
         .dog-calendar-top {
@@ -163,12 +161,11 @@
 
         .dog-calendar-weekdays {
             display: grid;
-            grid-template-columns: repeat(7, 100px);
+            grid-template-columns: repeat(7, 1fr);
             gap: 6px;
             margin-bottom: 6px;
             font-size: 12px;
             opacity: 0.95;
-            width: max-content;
         }
 
         .dog-calendar-weekdays div {
@@ -177,9 +174,8 @@
 
         .dog-calendar-grid {
             display: grid;
-            grid-template-columns: repeat(7, 100px);
+            grid-template-columns: repeat(7, 1fr);
             gap: 6px;
-            width: max-content;
         }
 
         .dog-calendar-cell {
