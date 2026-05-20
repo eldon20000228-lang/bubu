@@ -1034,8 +1034,9 @@
                 <div id="recentRecords"></div>
             </div>
 
-            <div style="margin-top: 30px; text-align: center;">
+            <div style="margin-top: 30px; text-align: center; display: flex; flex-direction: column; gap: 10px; align-items: center;">
                 <button class="btn btn-secondary" onclick="exportToExcel()"><i class="fas fa-file-excel"></i> 導出 Excel 數據</button>
+                <button class="btn btn-secondary" style="background: #607d8b; font-size: 12px; padding: 5px 15px;" onclick="scanOrphanPhotos()"><i class="fas fa-broom"></i> 掃描「有用」的照片檔名</button>
             </div>
         </div>
     </div>
@@ -1044,6 +1045,16 @@
     <div id="imageModal" class="modal" onclick="closeImageModal()">
         <img class="modal-content" id="modalImg" style="display: none;">
         <video class="modal-content" id="modalVideo" controls style="display: none;" onclick="event.stopPropagation()"></video>
+    </div>
+
+    <!-- 清理輔助彈窗 -->
+    <div id="cleanupModal" class="modal" onclick="this.style.display='none'">
+        <div class="section-card" style="max-width: 90%; max-height: 80%; overflow-y: auto; background: white; cursor: default;" onclick="event.stopPropagation()">
+            <h3 style="margin-bottom: 15px; border-bottom: 2px solid #eee; padding-bottom: 10px;">正在使用的檔案清單 (最新優先)</h3>
+            <p style="font-size: 13px; color: #666; margin-bottom: 15px;">請在 Cloudinary 後台對比，不在下方的檔案即可刪除。</p>
+            <div id="cleanupList" style="font-family: monospace; font-size: 12px; line-height: 1.6; word-break: break-all;"></div>
+            <button class="btn btn-primary" style="margin-top: 20px; width: 100%;" onclick="document.getElementById('cleanupModal').style.display='none'">關閉</button>
+        </div>
     </div>
 
     <script>
@@ -1064,6 +1075,7 @@
         firebase.analytics(); // 初始化 Analytics
         const db = firebase.firestore();
         const docRef = db.collection("petRecords").doc("Bubu");
+        let isSaving = false; // 同步鎖，防止保存時被雲端推送覆蓋本地數據
 
         // --- Cloudinary 配置 ---
         const cloudinaryConfig = {
@@ -1464,6 +1476,10 @@
             // 監聽 Firebase 數據變動
             docRef.onSnapshot((doc) => {
                 updateStatus(true);
+                if (isSaving) {
+                    console.log("⏳ 正在保存中，跳過雲端推送以防數據衝突");
+                    return;
+                }
                 if (doc.exists) {
                     appData = doc.data();
                     normalizeAppData();
@@ -1497,6 +1513,7 @@
 
         // 數據管理
         async function saveData() {
+            isSaving = true;
             // 同時保存到本地和 Firebase
             localStorage.setItem('petRecordsPro_Bubu', JSON.stringify(appData));
             try {
@@ -1506,6 +1523,9 @@
                 }
             } catch (e) {
                 console.error("❌ 同步到 Firebase 失敗:", e);
+            } finally {
+                // 延遲解除鎖定，確保 Firebase 的 snapshot 響應已處理
+                setTimeout(() => { isSaving = false; }, 1000);
             }
         }
 
@@ -2287,6 +2307,50 @@
             a.download = `bubu_records_${new Date().toISOString().split('T')[0]}.csv`;
             a.click();
             URL.revokeObjectURL(url);
+        }
+
+        function scanOrphanPhotos() {
+            const usedItems = [];
+            
+            // 掃描所有類別記錄
+            Object.values(appData.records).forEach(records => {
+                records.forEach(r => {
+                    if (r.photoUrl) usedItems.push({ url: r.photoUrl, id: r.id });
+                    if (r.videoUrl) usedItems.push({ url: r.videoUrl, id: r.id });
+                });
+            });
+
+            // 掃描日曆照片
+            if (appData.dailyDogPhotos) {
+                Object.entries(appData.dailyDogPhotos).forEach(([date, url]) => {
+                    // 日曆照片用日期當作排序依據
+                    usedItems.push({ url: url, id: new Date(date).getTime() });
+                });
+            }
+
+            if (usedItems.length === 0) {
+                alert("目前沒有任何使用的照片。");
+                return;
+            }
+
+            // 去重並按 ID (時間戳) 降序排列 (最新在前)
+            const uniqueItems = Array.from(new Map(usedItems.map(item => [item.url, item])).values())
+                                     .sort((a, b) => b.id - a.id);
+
+            // 提取檔名
+            const listHtml = uniqueItems.map(item => {
+                const parts = item.url.split('/');
+                const fileName = parts[parts.length - 1];
+                return `<div style="margin-bottom: 8px; padding-bottom: 4px; border-bottom: 1px solid #f0f0f0;">
+                            <span style="color: #667eea;">[${new Date(item.id).toLocaleDateString()}]</span><br>
+                            ${fileName}
+                        </div>`;
+            }).join("");
+
+            document.getElementById('cleanupList').innerHTML = listHtml;
+            document.getElementById('cleanupModal').style.display = 'flex';
+            
+            console.log("正在使用的完整清單：", uniqueItems);
         }
     </script>
 </body>
