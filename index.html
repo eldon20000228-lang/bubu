@@ -1512,13 +1512,37 @@
         }
 
         // 數據管理
-        async function saveData() {
+        async function saveData(atomicChange = null) {
             isSaving = true;
             // 同時保存到本地和 Firebase
             localStorage.setItem('petRecordsPro_Bubu', JSON.stringify(appData));
             try {
                 if (typeof docRef !== 'undefined') {
-                    await docRef.set(appData);
+                    if (atomicChange) {
+                        const { type, action, data, oldData, dateStr } = atomicChange;
+                        const updateObj = {};
+                        
+                        if (type === 'calendar') {
+                            updateObj[`dailyDogPhotos.${dateStr}`] = data;
+                            await docRef.update(updateObj);
+                        } else {
+                            const fieldPath = `records.${type}`;
+                            if (action === 'add') {
+                                updateObj[fieldPath] = firebase.firestore.FieldValue.arrayUnion(data);
+                                await docRef.update(updateObj);
+                            } else if (action === 'remove') {
+                                updateObj[fieldPath] = firebase.firestore.FieldValue.arrayRemove(data);
+                                await docRef.update(updateObj);
+                            } else if (action === 'update') {
+                                // 更新是先移除舊的，再加入新的
+                                await docRef.update({ [fieldPath]: firebase.firestore.FieldValue.arrayRemove(oldData) });
+                                await docRef.update({ [fieldPath]: firebase.firestore.FieldValue.arrayUnion(data) });
+                            }
+                        }
+                    } else {
+                        // 回退到全量覆蓋 (僅用於初始化或導入)
+                        await docRef.set(appData);
+                    }
                     console.log("✅ 數據已成功同步到 Firebase");
                 }
             } catch (e) {
@@ -2170,21 +2194,39 @@
                         }
                     }
 
+                    let change = null;
                     if (editingContext && editingContext.type === type) {
                         // 更新模式
                         const index = appData.records[type].findIndex(r => r.id === editingContext.id);
                         if (index !== -1) {
-                            appData.records[type][index] = { ...appData.records[type][index], ...formData };
+                            const oldRecord = appData.records[type][index];
+                            const newRecord = { ...oldRecord, ...formData };
+                            appData.records[type][index] = newRecord;
+                            change = { type, action: 'update', data: newRecord, oldData: oldRecord };
                         }
                         editingContext = null;
                     } else {
                         // 新增模式
                         const record = { id: Date.now(), ...formData };
                         appData.records[type].push(record);
+                        change = { type, action: 'add', data: record };
                     }
 
-                    await saveData();
+                    // 立即刷新 UI (本地先行，不用等 Firebase)
+                    refreshUI();
+
+                    await saveData(change);
                     
+                    // 顯示成功提示
+                    const statusText = document.getElementById('status-text');
+                    const originalText = statusText.textContent;
+                    statusText.textContent = '✅ 儲存成功！';
+                    statusText.style.color = '#00ff88';
+                    setTimeout(() => {
+                        statusText.textContent = originalText;
+                        statusText.style.color = '';
+                    }, 2000);
+
                     form.reset();
                     selectedPhotos[type] = null;
                     if (removedPhotos[type] !== undefined) removedPhotos[type] = false;
