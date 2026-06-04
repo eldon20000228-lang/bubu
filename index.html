@@ -1514,41 +1514,51 @@
         // 數據管理
         async function saveData(atomicChange = null) {
             isSaving = true;
-            // 同時保存到本地和 Firebase
+            // 同時保存到本地
             localStorage.setItem('petRecordsPro_Bubu', JSON.stringify(appData));
+            
             try {
                 if (typeof docRef !== 'undefined') {
                     if (atomicChange) {
                         const { type, action, data, oldData, dateStr } = atomicChange;
                         const updateObj = {};
                         
-                        if (type === 'calendar') {
-                            updateObj[`dailyDogPhotos.${dateStr}`] = data;
-                            await docRef.update(updateObj);
-                        } else {
-                            const fieldPath = `records.${type}`;
-                            if (action === 'add') {
-                                updateObj[fieldPath] = firebase.firestore.FieldValue.arrayUnion(data);
+                        try {
+                            if (type === 'calendar') {
+                                updateObj[`dailyDogPhotos.${dateStr}`] = data;
                                 await docRef.update(updateObj);
-                            } else if (action === 'remove') {
-                                updateObj[fieldPath] = firebase.firestore.FieldValue.arrayRemove(data);
-                                await docRef.update(updateObj);
-                            } else if (action === 'update') {
-                                // 更新是先移除舊的，再加入新的
-                                await docRef.update({ [fieldPath]: firebase.firestore.FieldValue.arrayRemove(oldData) });
-                                await docRef.update({ [fieldPath]: firebase.firestore.FieldValue.arrayUnion(data) });
+                            } else {
+                                const fieldPath = `records.${type}`;
+                                if (action === 'add') {
+                                    updateObj[fieldPath] = firebase.firestore.FieldValue.arrayUnion(data);
+                                    await docRef.update(updateObj);
+                                } else if (action === 'remove') {
+                                    updateObj[fieldPath] = firebase.firestore.FieldValue.arrayRemove(data);
+                                    await docRef.update(updateObj);
+                                } else if (action === 'update') {
+                                    await docRef.update({ [fieldPath]: firebase.firestore.FieldValue.arrayRemove(oldData) });
+                                    await docRef.update({ [fieldPath]: firebase.firestore.FieldValue.arrayUnion(data) });
+                                }
                             }
+                            console.log("✅ 原子更新成功");
+                        } catch (atomicError) {
+                            console.warn("⚠️ 原子更新失敗，嘗試全量備份修復結構:", atomicError);
+                            // 如果原子更新失敗（可能是結構損壞），執行全量覆蓋來修復雲端結構
+                            await docRef.set(appData);
                         }
                     } else {
-                        // 回退到全量覆蓋 (僅用於初始化或導入)
                         await docRef.set(appData);
                     }
                     console.log("✅ 數據已成功同步到 Firebase");
                 }
             } catch (e) {
-                console.error("❌ 同步到 Firebase 失敗:", e);
+                console.error("❌ 同步到 Firebase 完全失敗:", e);
+                const statusText = document.getElementById('status-text');
+                if (statusText) {
+                    statusText.textContent = '❌ 同步失敗 (請檢查網路)';
+                    statusText.style.color = '#ff4b4b';
+                }
             } finally {
-                // 延遲解除鎖定，確保 Firebase 的 snapshot 響應已處理
                 setTimeout(() => { isSaving = false; }, 1000);
             }
         }
